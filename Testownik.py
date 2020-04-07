@@ -1,18 +1,35 @@
 import tkinter as tkr
 from PIL import Image, ImageTk
+import sqlite3
 import time
 import Pytania
 import random
+
 
 root = tkr.Tk()
 load = Image.open("Alg.png")
 load = load.resize((610, 510), Image.ANTIALIAS)
 render = ImageTk.PhotoImage(load)
+
 nr1 = 1
 nr2 = 1
-lista = Pytania.baza()
+HEIGHT = 500
+WIDTH = 600
+
 it = []
 it2 = []
+def baza():
+    conn = sqlite3.connect('baza.db')
+
+    ilosc = int(Pytania.get_ilosc("Pytania"))
+    lista = []
+
+    for i in range(1,ilosc+1):
+        lista.append(Pytania.get_calosc("Pytania",i)[0])
+    conn.close()
+    return lista
+
+lista = baza()
 
 def main(nr1,nr2):
     global odp,nrpytania
@@ -24,9 +41,7 @@ def main(nr1,nr2):
     list = root.pack_slaves()
     for l in list:
         l.destroy()
-    print(nr1,nr2)
-    HEIGHT = 500
-    WIDTH = 600
+    #print(nr1,nr2)
 
     canvas = tkr.Canvas(root, height=HEIGHT, width=WIDTH)
     canvas.pack()
@@ -35,10 +50,10 @@ def main(nr1,nr2):
     img.image = render
     img.place(x=-5, y=-5)
 
-    button1 = tkr.Button(root, text="Start", font=30,command = lambda : start(nr1,nr2))
+    button1 = tkr.Button(root, text="Start", font=30,bg = "white",command = lambda : start(nr1,nr2))
     button1.place(relx = 0.5,rely = 0.5,relheight=0.1, relwidth=0.3,anchor = 'n')
 
-    button2 = tkr.Button(root, text="Ustawienia", font=30, command = ustawienia)
+    button2 = tkr.Button(root, text="Ustawienia", font=30,bg = "white", command = ustawienia)
     button2.place(relx=0.5, rely=0.65, relheight=0.1, relwidth=0.3, anchor='n')
 
 def start(nr1,nr2):
@@ -52,14 +67,6 @@ def start(nr1,nr2):
     random.shuffle(it)
     pytania(it[nrpytania],nr2)
 
-    #for i in lista:
-    #    print(i)
-    #    if pytania(i) != True:
-    #        for j in range(nr2):
-    #            it.append(i)
-    #           random.shuffle(it
-    #    else:
-    #        it.remove(i)
 
 def pytania(pytanie,ilosc):
     list = root.place_slaves()
@@ -70,42 +77,42 @@ def pytania(pytanie,ilosc):
         l.destroy()
 
 
+
     var1 = tkr.IntVar()
-    var2 = tkr.IntVar()
-    var3 = tkr.IntVar()
-    var4 = tkr.IntVar()
+    label1 = tkr.Label(root, text=pytanie[0], font=30,borderwidth = 10,relief = "groove",bg = "white")
+    label1.place(relx=0.15, rely=0.1, relheight=0.1, relwidth=0.7, anchor = 'w')
 
-    label1 = tkr.Label(root, text=pytanie[0], font=30)
-    label1.place(relx=0.2, rely=0.1, relheight=0.1, relwidth=0.7, anchor='n')
-
-    label2 = tkr.Label(root, text=pytanie[1], font=20)
+    label2 = tkr.Label(root, text=pytanie[1], font=20,borderwidth = 5,relief = "groove",bg = "white")
     label2.place(relx=0.15, rely=0.3, relheight=0.1, relwidth=0.7, anchor='w')
 
-    label3 = tkr.Label(root, text=pytanie[2], font=20)
+    label3 = tkr.Label(root, text=pytanie[2], font=20,borderwidth = 5,relief = "groove",bg = "white")
     label3.place(relx=0.15, rely=0.4, relheight=0.1, relwidth=0.7, anchor='w')
 
-    label4 = tkr.Label(root, text=pytanie[3], font=20)
+    label4 = tkr.Label(root, text=pytanie[3], font=20,borderwidth = 5,relief = "groove",bg = "white")
     label4.place(relx=0.15, rely=0.5, relheight=0.1, relwidth=0.7, anchor='w')
 
-    label5 = tkr.Label(root, text=pytanie[4], font=20)
+    label5 = tkr.Label(root, text=pytanie[4], font=20,borderwidth = 5,relief = "groove",bg = "white")
     label5.place(relx=0.15, rely=0.6, relheight=0.1, relwidth=0.7, anchor='w')
 
-    check1 = tkr.Checkbutton(root, font=20, variable=var1)
+    labelwhite = tkr.Label(root, font=20, borderwidth=5, relief="groove",bg = "white")
+    labelwhite.place(relx=0.15, rely=0.75, relheight=0.05, relwidth=0.7, anchor='w')
+
+    check1 = tkr.Radiobutton(root, font=20, variable=var1, value = 1)
     check1.place(relx=0.05, rely=0.25, relheight=0.1, relwidth=0.1, anchor='n')
 
-    check2 = tkr.Checkbutton(root, font=20, variable=var2)
+    check2 = tkr.Radiobutton(root, font=20, variable=var1, value = 2)
     check2.place(relx=0.05, rely=0.35, relheight=0.1, relwidth=0.1, anchor='n')
 
-    check3 = tkr.Checkbutton(root, font=20, variable=var3)
+    check3 = tkr.Radiobutton(root, font=20, variable=var1, value = 3)
     check3.place(relx=0.05, rely=0.45, relheight=0.1, relwidth=0.1, anchor='n')
 
-    check4 = tkr.Checkbutton(root, font=20, variable=var4)
+    check4 = tkr.Radiobutton(root, font=20, variable=var1, value = 4)
     check4.place(relx=0.05, rely=0.55, relheight=0.1, relwidth=0.1, anchor='n')
 
-    button1 = tkr.Button(root, text="Dalej", font=20,command = lambda : czy_prawidlowe(pytanie[5],var1.get(),var2.get(),var3.get(),var4.get(),ilosc))
+    button1 = tkr.Button(root, text="Dalej", font=20,bg = "white",command = lambda : czy_prawidlowe(pytanie[5],var1.get(),ilosc))
     button1.place(relx=0.8, rely=0.85, relheight=0.1, relwidth=0.2, anchor='n')
 
-    button2 = tkr.Button(root, text="Sprawdz", font=20,
+    button2 = tkr.Button(root, text="Sprawdz",bg = "white", font=20,
                          command=lambda: sprawdz(pytanie[5], label2,label3,label4,label5))
     button2.place(relx=0.6, rely=0.85, relheight=0.1, relwidth=0.2, anchor='n')
 
@@ -119,53 +126,30 @@ def sprawdz(nr,label1,label2,label3,label4):
     elif nr == 4:
         label4.config(bg="green")
 
-def czy_prawidlowe(prawidlowe,nr1,nr2,nr3,nr4,ilosc):
+def czy_prawidlowe(prawidlowe,nr1, ilosc):
     global odp,nrpytania,it,it2
 
-    if prawidlowe == 1:
-        if nr1 == 1 and nr2 == 0 and nr3 == 0 and nr4 == 0:
-            odp += 1
-            nrpytania += 1
-        else:
-            odp -= 1
-            for i in range(ilosc):
-                it2.append(it[nrpytania])
-    elif prawidlowe == 2:
-        if nr1 == 0 and nr2 == 1 and nr3 == 0 and nr4 == 0:
-            odp += 1
-            nrpytania += 1
-        else:
-            odp -= 1
-            for i in range(ilosc):
-                it2.append(it[nrpytania])
-    elif prawidlowe == 3:
-        if nr1 == 0 and nr2 == 0 and nr3 == 1 and nr4 == 0:
-            odp += 1
-            nrpytania += 1
-        else:
-            odp -= 1
-            for i in range(ilosc):
-                it2.append(it[nrpytania])
-    elif prawidlowe == 4:
-        if nr1 == 0 and nr2 == 0 and nr3 == 0 and nr4 == 1:
-            odp += 1
-            nrpytania += 1
-        else:
-            odp -= 1
-            for i in range(ilosc):
-                it2.append(it[nrpytania])
+    if prawidlowe == 1 and nr1 == 1:
+        odp += 1
+        nrpytania += 1
+    elif prawidlowe == 2 and nr1 == 2:
+        odp += 1
+        nrpytania += 1
+    elif prawidlowe == 3 and nr1 == 3:
+        odp += 1
+        nrpytania += 1
+    elif prawidlowe == 4 and nr1 == 4:
+        odp += 1
+        nrpytania += 1
+    else:
+        odp -= 1
+        for i in range(ilosc):
+            it.append(it[nrpytania])
+        nrpytania += 1
 
     #print(len(it),nrpytania,odp)
     if nrpytania < len(it):
         pytania(it[nrpytania],ilosc)
-        print(it,it2)
-    elif nrpytania == len(it) and len(it2) > 0:
-        it = it2
-        it2 = []
-        it = random.shuffle(it)
-        nrpytania = 0
-        pytania(it[nrpytania], ilosc)
-        print("1")
     else:
         wynik(1,1)
 
@@ -180,55 +164,49 @@ def ustawienia():
 
     var1 = tkr.IntVar()
     var2 = tkr.IntVar()
-    var3 = tkr.IntVar()
-    var4 = tkr.IntVar()
-    var5 = tkr.IntVar()
-    var6 = tkr.IntVar()
-    var7 = tkr.IntVar()
-    var8 = tkr.IntVar()
 
-    label1 = tkr.Label(root, text = "Wybierz ilosc powtorzeń 1 pytania:", font = 20)
-    label1.place(relx = 0.25,rely = 0.1,relheight=0.1, relwidth=0.7,anchor = 'n')
+    label1 = tkr.Label(root, text = "Wybierz ilosc powtorzeń 1 pytania:", font = 20,borderwidth = 10,relief = "groove",bg = "white")
+    label1.place(relx = 0.05,rely = 0.1,relheight=0.1, relwidth=0.7,anchor = 'w')
 
-    label3 = tkr.Label(root, text="1             2            3             4", font=20)
+    label3 = tkr.Label(root, text="1          2         3          4", font=20)
     label3.place(relx=0.24, rely=0.3, relheight=0.1, relwidth=0.5, anchor='n')
 
-    check1 = tkr.Checkbutton(root, font=20,variable = var1)
+    check1 = tkr.Radiobutton(root, font=20,variable = var1, value = 1)
     check1.place(relx=0.1, rely=0.2, relheight=0.1, relwidth=0.2, anchor='n')
 
-    check2 = tkr.Checkbutton(root, font=20,variable = var2)
+    check2 = tkr.Radiobutton(root, font=20,variable = var1, value = 2)
     check2.place(relx=0.2, rely=0.2, relheight=0.1, relwidth=0.2, anchor='n')
 
-    check3 = tkr.Checkbutton(root, font=20,variable = var3)
+    check3 = tkr.Radiobutton(root, font=20,variable = var1, value = 3,)
     check3.place(relx=0.3, rely=0.2, relheight=0.1, relwidth=0.2, anchor='n')
 
-    check4 = tkr.Checkbutton(root, font=20,variable = var4)
+    check4 = tkr.Radiobutton(root, font=20,variable = var1, value = 4)
     check4.place(relx=0.4, rely=0.2, relheight=0.1, relwidth=0.2, anchor='n')
 
-    label2 = tkr.Label(root, text="Dodaj pytanie w razie bledu",font = 20)
-    label2.place(relx=0.25, rely=0.5, relheight=0.1, relwidth=0.9, anchor='n')
+    label2 = tkr.Label(root, text="Dodaj pytanie w razie bledu",font = 20,borderwidth = 10,relief = "groove",bg = "white")
+    label2.place(relx=0.05, rely=0.5, relheight=0.1, relwidth=0.9, anchor='w')
 
-    check5 = tkr.Checkbutton(root, font=20, variable = var5)
+    check5 = tkr.Radiobutton(root, font=20, variable = var2, value = 0)
     check5.place(relx=0.1, rely=0.6, relheight=0.1, relwidth=0.2, anchor='n')
 
-    check6 = tkr.Checkbutton(root, font=20, variable = var6)
+    check6 = tkr.Radiobutton(root, font=20, variable = var2, value = 1)
     check6.place(relx=0.2, rely=0.6, relheight=0.1, relwidth=0.2, anchor='n')
 
-    check7 = tkr.Checkbutton(root, font=20, variable = var7)
+    check7 = tkr.Radiobutton(root, font=20, variable = var2, value = 2)
     check7.place(relx=0.3, rely=0.6, relheight=0.1, relwidth=0.2, anchor='n')
 
-    check8 = tkr.Checkbutton(root, font=20, variable = var8)
+    check8 = tkr.Radiobutton(root, font=20, variable = var2,  value = 3)
     check8.place(relx=0.4, rely=0.6, relheight=0.1, relwidth=0.2, anchor='n')
 
-    label4 = tkr.Label(root, text="1             2             3             4", font=20)
+    label4 = tkr.Label(root, text="0          1         2          3", font=20)
     label4.place(relx=0.24, rely=0.7, relheight=0.1, relwidth=0.5, anchor='n')
 
-    button1 = tkr.Button(root, text="Dalej", font=30, command = lambda : ustawieniahelp(var1.get(),var2.get(),var3.get(),var4.get(),var5.get(),var6.get(),var7.get(),var8.get()))
+    button1 = tkr.Button(root, text="Dalej", font=30,bg = "white", command = lambda : main(var1.get(),var2.get()))
     button1.place(relx=0.8, rely=0.85, relheight=0.1, relwidth=0.3, anchor='n')
 
-def ustawieniahelp(nr1,nr2,nr3,nr4,nr5,nr6,nr7,nr8):
-    lista1 = [nr1,nr2,nr3,nr4]
-    lista2 = [nr5,nr6,nr7,nr8]
+def ustawieniahelp(nr1,nr2):
+    lista1 = [nr1]
+    lista2 = [nr2]
 
     if lista1.count(1) != 0:
         pk1 = lista1.index(1) + 1
